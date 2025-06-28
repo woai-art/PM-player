@@ -1,0 +1,53 @@
+{
+  "name": "personal-media-player",
+  "version": "1.0.0",
+  "description": "Personal media player for ad-free streaming from various online sources",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "setup": "npm install && npm run setup-python",
+    "setup-python": "python -m venv venv && venv/Scripts/activate && pip install yt-dlp",
+    "start-with-venv": "venv/Scripts/activate && npm start"
+  },
+  "keywords": ["media-player", "streaming", "electron", "yt-dlp"],
+  "author": "Personal Media Player",
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^27.0.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "child_process": "^1.0.2",
+    "path": "^0.12.7",
+    "fs-extra": "^11.1.1"
+  },
+  "devDependencies": {
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.personalmediaplayer.app",
+    "productName": "Personal Media Player",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "assets/**/*",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    }
+  }
+} 

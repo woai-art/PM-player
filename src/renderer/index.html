@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Media Player</title>
+    <link rel="icon" type="image/png" href="/assets/icon.png">
+    <link rel="apple-touch-icon" href="/assets/icon.png">
+    <link rel="stylesheet" href="styles.css?v=2.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- HLS.js удален для стабильности - используем только MP4/WebM -->
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <img src="/assets/icon.png" alt="Media Player" class="logo-icon">
+                <span>Personal Media Player</span>
+            </div>
+            <div class="header-controls">
+                <button id="minimize-btn" class="window-btn" title="Minimize">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button id="maximize-btn" class="window-btn" title="Maximize">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button id="close-btn" class="window-btn close" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="nav-menu">
+                    <div class="nav-item active" data-tab="player">
+                        <i class="fas fa-play"></i>
+                        <span>Player</span>
+                    </div>
+                    <div class="nav-item" data-tab="library">
+                        <i class="fas fa-folder"></i>
+                        <span>Library</span>
+                    </div>
+                    <div class="nav-item" data-tab="downloads">
+                        <i class="fas fa-download"></i>
+                        <span>Downloads</span>
+                    </div>
+                    <div class="nav-item" data-tab="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </div>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Player Tab -->
+                <div class="tab-content active" id="player-tab">
+                    <div class="url-input-section">
+                        <div class="input-group">
+                            <input type="text" id="url-input" placeholder="Enter video URL (YouTube, Vimeo, etc.) or select local file">
+                            <button id="load-url-btn" class="btn primary">
+                                <i class="fas fa-search"></i>
+                                Load
+                            </button>
+                            <button id="select-file-btn" class="btn secondary">
+                                <i class="fas fa-folder-open"></i>
+                                Browse
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="video-info" id="video-info" style="display: none;">
+                        <div class="info-header">
+                            <img id="video-thumbnail" src="" alt="Video thumbnail">
+                            <div class="info-details">
+                                <h3 id="video-title"></h3>
+                                <p id="video-duration"></p>
+                                <div class="quality-selector">
+                                    <label for="quality-select">Quality:</label>
+                                    <select id="quality-select">
+                                        <option value="best">Best Available</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="action-buttons">
+                            <button id="play-btn" class="btn primary large">
+                                <i class="fas fa-play"></i>
+                                Play
+                            </button>
+                            <button id="vlc-btn" class="btn secondary large" title="Открыть в VLC Media Player">
+                                <i class="fas fa-external-link-alt"></i>
+                                VLC
+                            </button>
+                            <button id="download-btn" class="btn success large" title="Скачать видео на диск">
+                                <i class="fas fa-download"></i>
+                                Download
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="video-player" id="video-player" style="display: none;">
+                        <video id="video-element" controls preload="metadata" crossorigin="anonymous" playsinline webkit-playsinline>
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="player-controls">
+                            <div class="control-group">
+                                <button id="play-pause-btn" class="control-btn">
+                                    <i class="fas fa-play"></i>
+                                </button>
+                                <button id="stop-btn" class="control-btn">
+                                    <i class="fas fa-stop"></i>
+                                </button>
+                                <span id="time-display">00:00 / 00:00</span>
+                            </div>
+                            <div class="volume-control">
+                                <i class="fas fa-volume-up"></i>
+                                <input type="range" id="volume-slider" min="0" max="100" value="100">
+                            </div>
+                            <div class="fullscreen-control">
+                                <button id="fullscreen-btn" class="control-btn">
+                                    <i class="fas fa-expand"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Library Tab -->
+                <div class="tab-content" id="library-tab">
+                    <div class="library-header">
+                        <h2>Media Library</h2>
+                        <button id="add-to-library-btn" class="btn primary">
+                            <i class="fas fa-plus"></i>
+                            Add Media
+                        </button>
+                    </div>
+                    <div class="library-grid" id="library-grid">
+                        <div class="library-item-placeholder">
+                            <i class="fas fa-folder-open"></i>
+                            <p>No media in library</p>
+                            <small>Add videos or audio files to get started</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Downloads Tab -->
+                <div class="tab-content" id="downloads-tab">
+                    <div class="downloads-header">
+                        <h2>Downloads</h2>
+                        <button id="clear-downloads-btn" class="btn secondary">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                    </div>
+                    <div class="downloads-list" id="downloads-list">
+                        <div class="downloads-placeholder">
+                            <i class="fas fa-download"></i>
+                            <p>No downloads</p>
+                            <small>Downloaded media will appear here</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div class="tab-content" id="settings-tab">
+                    <div class="settings-header">
+                        <h2>Settings</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="setting-group">
+                            <h3>General</h3>
+                            <div class="setting-item">
+                                <label for="default-quality">Default Quality:</label>
+                                <select id="default-quality">
+                                    <option value="best">Best Available</option>
+                                    <option value="1080p">1080p</option>
+                                    <option value="720p">720p</option>
+                                    <option value="480p">480p</option>
+                                    <option value="360p">360p</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label for="auto-play">Auto-play videos:</label>
+                                <input type="checkbox" id="auto-play" checked>
+                            </div>
+                        </div>
+                        <div class="setting-group">
+                            <h3>Downloads</h3>
+                            <div class="setting-item">
+                                <label for="download-path">Download Path:</label>
+                                <div class="path-input">
+                                    <input type="text" id="download-path" value="./downloads" readonly>
+                                    <button id="browse-download-path" class="btn secondary small">Browse</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="setting-group">
+                            <h3>Advanced</h3>
+                            <div class="setting-item">
+                                <label for="yt-dlp-path">yt-dlp Path:</label>
+                                <input type="text" id="yt-dlp-path" value="yt-dlp" placeholder="Path to yt-dlp executable">
+                            </div>
+                            <div class="setting-item">
+                                <label>Обновить yt-dlp:</label>
+                                <button id="update-yt-dlp-btn" class="btn secondary small">
+                                    <i class="fas fa-sync"></i>
+                                    Обновить
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loading-overlay" style="display: none;">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p id="loading-text">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toast-container"></div>
+    </div>
+
+    <script src="renderer.js?v=2.0"></script>
+</body>
+</html> 
